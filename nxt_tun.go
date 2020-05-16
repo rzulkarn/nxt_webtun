@@ -30,5 +30,7 @@ func main() {
 		frame = frame[:n]
 
 		log.Printf("Dst: %s\n", frame.Destination())
+		log.Printf("Ethertype: %x\n", frame.Ethertype())
+		log.Printf("Payload: %x\n", frame.Payload())
 	}
 }
