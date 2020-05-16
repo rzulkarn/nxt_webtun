@@ -1,9 +1,9 @@
 package main
 
 import (
-	“log”
-	“github.com/songgao/packets/ethernet”
-	“github.com/songgao/water”
+	"github.com/songgao/packets/ethernet"
+	"github.com/songgao/water"
+	"log"
 )
 
 func main() {
@@ -11,9 +11,9 @@ func main() {
 		DeviceType: water.TAP,
 	}
 
-	config.Name = “sample_dev”
+	config.Name = "sample_dev"
 
-	ifce, err := water.New(config) //This is where the tap device is created
+	ifce, err := water.New(config) // New a tap device
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -22,20 +22,13 @@ func main() {
 	for {
 		frame.Resize(1500)
 
-		n, err := ifce.Read([]byte(frame)) //the userspace program now reads
-
-		//on the file descriptor
+		n, err := ifce.Read([]byte(frame))
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		//all the details of the ethernet frame are printed
-
 		frame = frame[:n]
 
-		log.Printf(“Dst: %s\n”, frame.Destination())
-		log.Printf(“Src: %s\n”, frame.Source())
-		log.Printf(“Ethertype: % x\n”, frame.Ethertype())
-		log.Printf(“Payload: % x\n”, frame.Payload())
+		log.Printf("Dst: %s\n", frame.Destination())
 	}
 }
