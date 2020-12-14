@@ -15,3 +15,7 @@ $ip addr show
     inet6 fe80::246c:c8ff:fea5:6948/64 scope link 
        valid_lft forever preferred_lft forever
 ```
+
+```
+Packets sent by an operating system via a tun/tap device are delivered to a user-space program which attaches itself to the device. A user-space program may also pass packets into a tun/tap device. In this case the tun/tap device delivers (or “injects”) these packets to the operating-system network stack thus emulating their reception from an external source. tun/tap interfaces are software-only interfaces, meaning that they exist only in the kernel and, unlike regular network interfaces, they have no physical hardware component (and so there’s no physical wire connected to them).
+```
