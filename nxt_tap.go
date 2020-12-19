@@ -14,6 +14,11 @@ import (
 	"golang.org/x/net/ipv4"
 )
 
+var (
+	snaplen int32 = 65535
+	MTU     int64 = 1500
+)
+
 func ifaceSetup(localCIDR string) *water.Interface {
 	iface, err := water.New(water.Config{DeviceType: water.TUN})
 	if nil != err {
@@ -30,10 +35,6 @@ func ifaceSetup(localCIDR string) *water.Interface {
 }
 
 func main() {
-	var (
-		snaplen int32 = 65535
-	)
-
 	ifce := ifaceSetup("10.1.0.2")
 
 	packet := make([]byte, snaplen)
