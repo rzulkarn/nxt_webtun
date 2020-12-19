@@ -1,9 +1,9 @@
 # nxt webtun
 
-On iOS/MacOS, starting from 2019, it introduced System/Network Extension to allow apps developer to do content filtering, DNS Proxy, VPN types of application. It allows to run the app user permission aka. “Trusted app”. It usable Swift or Objective C, similarly VPNService on Android written in Java. OpenVPN written in C, uses freebsd specific library to implement VPN like service.  
+12/19/2020 - On iOS/MacOS, starting from 2019, it introduced System/Network Extension to allow apps developer to do content filtering, DNS Proxy, VPN types of application. It allows to run the app user permission aka. “Trusted app”. It usable Swift or Objective C, similarly VPNService on Android written in Java. OpenVPN written in C, uses freebsd specific library to implement VPN like service.  
 
 ```
-Experiment MacOS only
+Experiment on MacOS only
 $ sudo go run nxt_tap.go
 1. This module creates a virtual interface utunX
 2. Assign point to point IP (P-t-P) 10.1.0.1 -> 10.1.0.2
@@ -26,5 +26,22 @@ Sending to remote: ver=4 hdrlen=20 tos=0x0 totallen=21524 id=0xee0f flags=0x0 fr
 ```
 
 ```
-Packets sent by an operating system via a tun/tap device are delivered to a user-space program which attaches itself to the device. A user-space program may also pass packets into a tun/tap device. In this case the tun/tap device delivers (or “injects”) these packets to the operating-system network stack thus emulating their reception from an external source. tun/tap interfaces are software-only interfaces, meaning that they exist only in the kernel and, unlike regular network interfaces, they have no physical hardware component (and so there’s no physical wire connected to them).
+Cisco AnyConnect routing table (sample ifconfig and netstat when enabled)
+
+rzulkarn$ ifconfig utun1
+utun1: flags=80d1<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST> mtu 1250
+       inet 192.168.25.207 --> 192.168.25.207 netmask 0xffffffff
+
+Destination        Gateway            Flags        Refs      Use   Netif Expire
+default            192.168.25.207     UGSc          114        0   utun1      
+192.168.1          link#13            UCS             2        0   utun1      
+192.168.1.1/32     link#13            UCS             0        0   utun1      
+192.168.1.121      link#13            UHW3I           0        0   utun1      7
+192.168.1.196      link#13            UHW3I           0        0   utun1      7
+192.168.25.207/32  link#13            UCS             1        0   utun1      
+192.168.25.207     link#13            UHWIir         25       17   utun1      
+224.0.0/4          link#13            UmCS            1        0   utun1      
+224.0.0.251        link#13            UHmW3I          0        0   utun1      7
+255.255.255.255/32 link#13            UCS             0        0   utun1      
 ```
+Packets sent by an operating system via a tun/tap device are delivered to a user-space program which attaches itself to the device. A user-space program may also pass packets into a tun/tap device. In this case the tun/tap device delivers (or “injects”) these packets to the operating-system network stack thus emulating their reception from an external source. tun/tap interfaces are software-only interfaces, meaning that they exist only in the kernel and, unlike regular network interfaces, they have no physical hardware component (and so there’s no physical wire connected to them).
