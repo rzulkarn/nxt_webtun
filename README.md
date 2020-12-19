@@ -10,6 +10,7 @@ $ sudo go run nxt_tap.go
 3. ping 10.1.0.2 will send an ICMP packet to 10.1.0.2 via utunX
 4. Modify the Dst Address to 127.0.0.1, inject the packet back to utunX
 5. TODO .. route this packet to another go listener.
+6. TODO .. program the default route to utun4
 
 $ netstat -rn | more
 default            192.168.1.1        UGSc           en0       
