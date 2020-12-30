@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/hex"
 	"fmt"
 	"log"
 	"net"
@@ -49,12 +48,20 @@ func main() {
 		header, _ := ipv4.ParseHeader(packet[:n])
 		fmt.Printf("Header struct: %+v (%+v)\n", header, err)
 
-		packet := gopacket.NewPacket(packet, layers.LayerTypeIPv4, gopacket.Default)
-		if ipLayer := packet.Layer(layers.LayerTypeIPv4); ipLayer != nil {
-			ip := ipLayer.(*layers.IPv4)
-			dst := ip.DstIP.String()
-			src := ip.SrcIP.String()
-			fmt.Printf("Dst: %s, Src: %s\n", dst, src)
+		newPacket := gopacket.NewPacket(packet, layers.LayerTypeIPv4, gopacket.Default)
+
+		// Check if packet is TCP ....
+		if tcpLayer := newPacket.Layer(layers.LayerTypeTCP); tcpLayer != nil {
+			fmt.Println("This is TCP packet!")
+			tcp, _ := tcpLayer.(*layers.TCP)
+			fmt.Printf("From src port %d to dst port %d\n", tcp.SrcPort, tcp.DstPort)
+		}
+
+		// Check if packet is IPv4 ....
+		if ipLayer := newPacket.Layer(layers.LayerTypeIPv4); ipLayer != nil {
+			//fmt.Println("This is IP packet")
+			ip, _ := ipLayer.(*layers.IPv4)
+			//fmt.Printf("IP Dst: %s, Src: %s, Payload: % x\n", ip.DstIP.String(), ip.SrcIP.String(), ip.Payload)
 
 			ip.DstIP = net.ParseIP("127.0.0.1")
 
@@ -62,17 +69,17 @@ func main() {
 				ComputeChecksums: true,
 				FixLengths:       true,
 			}
+
 			newBuffer := gopacket.NewSerializeBuffer()
-			if err = gopacket.SerializeLayers(newBuffer, options,
-				ip,
-			); err != nil {
+			err := gopacket.SerializePacket(newBuffer, options, newPacket)
+			if err != nil {
 				log.Printf("[-] Serialize error: %s\n", err.Error())
 				return
 			}
 
 			outgoingPacket := newBuffer.Bytes()
-			fmt.Println("Hex dump of go packet serialization output:")
-			fmt.Println(hex.Dump(outgoingPacket))
+			fmt.Printf("Outgoing Packet % x\n", outgoingPacket)
+			fmt.Println("====")
 
 			// write it back into utun interface
 			ifce.Write(outgoingPacket)
@@ -96,3 +103,5 @@ func main() {
 // var frame ethernet.Frame
 // for {
 // 	frame.Resize(1500)
+
+// nc
